@@ -25,11 +25,11 @@ class Database
 
     }
 
-//    private function SetProperties($requestText, $requestParameters){
-//        $this->RequestText       = $requestText;
-//        $this->RequestParameters = $requestParameters;
-//
-//    }
+    private function SetProperties($requestText, $requestParameters){
+        $this->RequestText       = $requestText;
+        $this->RequestParameters = $requestParameters;
+
+    }
     public function ExecuteRequest(){
 
     }
