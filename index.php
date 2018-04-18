@@ -1,18 +1,12 @@
 <?php
 
-
+include 'login.php';
 include_once 'Users.php';
 
 
-
-if (empty($_COOKIE['PHPSESSID'])){
+if (empty($_COOKIE['PHPSESSID'])) {
     Users::GetLoginForm();
-//   exit;
+    exit;
+}else{
+    echo '';
 }
-
-/*
-
-include 'Database.php';
-
-$Database = new Database('','');*/
-

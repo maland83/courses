@@ -9,29 +9,34 @@
 
 class Database
 {
-
+//**************************************************************************************
     private $mysqli_conn;
+    private $mysqli_stmt;
+
     protected $db_parameters;
 
     private $RequestText;
     private $RequestParameters;
 
+    private $Response_array;
+//**************************************************************************************
 
-    public function __construct($requestText, $requestParameters)
+//**************************************************************************************
+    public function __construct($requestText, array $requestParameters = [])
     {
-        $this->GetBDParameters();
-        $this->MakeConnect();
-        //$this->SetProperties($requestText, $requestParameters);
-
-    }
-
-    private function SetProperties($requestText, $requestParameters){
-        $this->RequestText       = $requestText;
+        $this->RequestText = $requestText;
         $this->RequestParameters = $requestParameters;
 
+        if (empty($mysqli_conn)) {
+            $this->GetBDParameters();
+            $this->MakeConnect();
+        }
     }
-    public function ExecuteRequest(){
 
+    private function GetBDParameters()
+    {
+        require 'settings.php';
+        $this->db_parameters = getProjectSettings();
     }
 
     private function MakeConnect(){
@@ -44,10 +49,50 @@ class Database
         return $this->mysqli_conn;
     }
 
-    private function GetBDParameters()
-    {
-        require 'settings.php';
-        $this->db_parameters = getProjectSettings();
+    public function ExecuteRequest(){
+
+        $this->mysqli_stmt = $this->mysqli_conn->prepare($this->RequestText);
+
+        if (!empty($this->RequestParameters)){
+            $this->bind_params();
+        }
+
+        $this->mysqli_stmt->execute();
+        $result = $this->mysqli_stmt->get_result();
+
+        $response_array = [];
+
+        while ($row = $result->fetch_assoc()){
+            $response_array[] = $row;
+        };
+        $this->Response_array = $response_array;
     }
 
+    private function bind_params()
+    {
+        $param_type = '';
+        $params = $this->RequestParameters;
+        $mysqli_stmt = $this->mysqli_stmt;
+
+        foreach ($params as $_param) {
+            if ((int)$_param != 0) {
+                $param_type .= 'd';
+            } else
+                $param_type .= 's';
+        }
+
+        $a_param[] = &$param_type;
+
+        $n = count($params);
+        for ($i = 0; $i < $n; $i++) {
+            $a_param[] = &$params[$i];
+        }
+
+        call_user_func_array(array($mysqli_stmt, 'bind_param'), $a_param);
+    }
+
+    public function GetResult(){
+        return $this->Response_array;
+    }
 }
+//**************************************************************************************
