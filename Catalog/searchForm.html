@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../assets/style.css">
+</head>
+<body>
+<link rel="stylesheet" type="text/css" href="../assets/style.css">
+<form method="get" action="../Catalog/Search.php">
+
+    <label for="search_string">Search:</label>
+
+    <?php
+            $search_string_value = '';
+            if (!empty($_GET['search_string'])) {
+                $search_string_value = $_GET['search_string'];
+            }
+            ?>
+
+    <input type="text" class="text" id="search_string" value="<?= $search_string_value; ?>"
+           name="search_string">
+
+    <?php
+            include_once 'Product.php';
+            $checked = '';
+            if (!empty($_GET['only_popular'])) {
+                $checked = 'checked';
+            }
+            Product::GetSelection();
+            ?>
+
+    <div class="checkbox">
+        <label>
+            Popular: <input type="checkbox" name="only_popular" <?= $checked ?> >
+        </label>
+    </div>
+
+    <button class="btn btn-success" name="productSearch" type="submit">Search</button>
+</form>
+
+<!--<form action="/users/loguot.php" method="post">-->
+    <!--<input type="submit" name="LogOut" value="LogOut">-->
+<!--</form>-->
+
+</body>
+</html>

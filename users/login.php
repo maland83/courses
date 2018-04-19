@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!empty($user->currentUser)) {
         session_start();
+        $_SESSION['CurrentUserID'] = $user->currentUser['id'];
         header('Location', '/');
     }else{
         Users::GetRegistrationForm();

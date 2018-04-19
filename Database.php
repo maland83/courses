@@ -18,7 +18,7 @@ class Database
     private $RequestText;
     private $RequestParameters;
 
-    private $Response_array;
+    private $Response;
 //**************************************************************************************
 
 //**************************************************************************************
@@ -35,7 +35,7 @@ class Database
 
     private function GetBDParameters()
     {
-        require 'settings.php';
+        require_once 'settings.php';
         $this->db_parameters = getProjectSettings();
     }
 
@@ -60,12 +60,22 @@ class Database
         $this->mysqli_stmt->execute();
         $result = $this->mysqli_stmt->get_result();
 
+        if ($this->mysqli_stmt->insert_id != 0){
+            $this->Response = $this->mysqli_stmt->insert_id;
+            return true;
+        }
+
+        if (strstr(strtoupper($this->RequestText), 'UPDATE')){
+            $this->Response = $this->mysqli_stmt->affected_rows;
+            return true;
+        }
+
         $response_array = [];
 
         while ($row = $result->fetch_assoc()){
             $response_array[] = $row;
         };
-        $this->Response_array = $response_array;
+        $this->Response = $response_array;
     }
 
     private function bind_params()
@@ -92,7 +102,7 @@ class Database
     }
 
     public function GetResult(){
-        return $this->Response_array;
+        return $this->Response;
     }
 }
 //**************************************************************************************

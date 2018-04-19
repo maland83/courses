@@ -13,11 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     exit();
 } else {
 
-    if (Users::Validate()==false){
-        header('Location:/registration.php');
+    $user = new Users('','');
+    if ($user->Validate()==false){
+        header('Location:/users/registration.php');
     }else{
-      $user = new Users('','');
       $user->CompleteRegistration();
+        header('Location:/');
     }
 
 }
